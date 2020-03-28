@@ -1,0 +1,24 @@
+version: '3.7'
+services:
+  collector:
+    image: otelcol:latest
+    command: ['--config=/conf/collector-config.yaml', '--log-level=DEBUG']
+    volumes:
+      - type: bind
+        source: ./ot/collector-config.yaml
+        target: /conf/collector-config.yaml
+    ports:
+      - '55678:55678'
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    expose:
+      - '9411'
+      - '16686'
+    ports:
+      - '9411:9411'
+      - '16686:16686'
