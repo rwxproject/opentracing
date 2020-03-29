@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const axios = require('axios');
+const cors = require('cors');
 
 const os = require('os');
 const host = os.hostname();
@@ -10,18 +11,21 @@ const serverAddress = process.env.SRVADDR || 'localhost';
 const serverPort = process.env.SRVPORT || '3000';
 const apiTimer = process.env.APITIME || '5000';
 
-app.get('/', (req, res) => res.send(`${host}`))
+app.use(cors());
+
+app.get('/', (req, res) => res.send(`${host}`));
 app.get('/api', (req, res) => {
-    const time = Date.now();
-    res.json({host, time});
+  const time = Date.now();
+  res.json({ host, time });
 });
 
-setInterval(()=> {
-    axios.get(`http://${serverAddress}:${serverPort}/api`)
+setInterval(() => {
+  axios
+    .get(`http://${serverAddress}:${serverPort}/api`)
     .then(function(response) {
-    // console.log(response.headers);
-    console.log(response.data);
-  });
-},apiTimer)
+      // console.log(response.headers);
+      console.log(response.data);
+    });
+}, apiTimer);
 
-app.listen(port, () => console.log(`${host} Listening on port ${port}`))
+app.listen(port, () => console.log(`${host} Listening on port ${port}`));
